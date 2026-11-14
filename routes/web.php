@@ -3,9 +3,36 @@
 use Illuminate\Support\Facades\Route;
 use App\Ai\Agents\TicketSummarizer;
 use App\Models\KnowledgeArticle;
-
 use App\Ai\Agents\SupportAssistant;
+use App\Models\User;
 
+
+
+Route::get('/test/stream', function () {
+    $user = User::where('email', 'ahmed@test.com')->first();
+
+    return (new SupportAssistant)
+        ->forUser($user)
+        ->stream(request('msg', 'إيه سياسة الاسترجاع عندكم؟'));
+});
+Route::get('/test/chat', function () {
+    $user    = User::where('email', 'ahmed@test.com')->first(); // في التطبيق الحقيقي: auth()->user()
+    $message = request('msg');
+    $cid     = request('cid');
+
+    $agent = new SupportAssistant;
+
+    $agent = $cid
+        ? $agent->continue($cid, as: $user)   // كمّل محادثة قديمة
+        : $agent->forUser($user);             // ابدأ محادثة جديدة
+
+    $response = $agent->prompt($message);
+
+    return response()->json([
+        'conversation_id' => $response->conversationId,
+        'reply'           => (string) $response,
+    ], 200, [], JSON_UNESCAPED_UNICODE);
+});
 Route::get('/test/assistant', function () {
     $message = request('msg', ' طلبي رقم ORD-1001 وإيميلي ahmed@test.com، هيوصل امتى؟واعرضلى الطلب ');
 
