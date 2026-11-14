@@ -4,13 +4,15 @@ namespace App\Ai\Agents;
 
 use App\Ai\Tools\GetOrderStatus;
 use App\Ai\Tools\SearchKnowledgeBase;
+use Laravel\Ai\Concerns\RemembersConversations;
 use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Promptable;
 
-class SupportAssistant implements Agent, HasTools
+class SupportAssistant implements Agent, HasTools , Conversational
 {
-    use Promptable;
+    use Promptable,RemembersConversations;
 
     public function instructions(): string
     {
