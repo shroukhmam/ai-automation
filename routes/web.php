@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Ai\Agents\TicketSummarizer;
-
+use App\Models\KnowledgeArticle;
 
 use App\Ai\Agents\SupportAssistant;
 
@@ -10,6 +10,15 @@ Route::get('/test/assistant', function () {
     $message = request('msg', ' طلبي رقم ORD-1001 وإيميلي ahmed@test.com، هيوصل امتى؟واعرضلى الطلب ');
 
     return (string) (new SupportAssistant)->prompt($message);
+});
+
+Route::get('/test/search', function () {
+    $query = request('q', 'عايز فلوسي ترجع');
+
+    return KnowledgeArticle::query()
+        ->whereVectorSimilarTo('embedding', $query, minSimilarity: 0.6)
+        ->limit(3)
+        ->get(['id', 'title']);
 });
 Route::get('/test/summary', function () {
     $messages = [
