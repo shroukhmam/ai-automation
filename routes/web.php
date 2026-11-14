@@ -3,6 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Ai\Agents\TicketSummarizer;
 
+
+use App\Ai\Agents\SupportAssistant;
+
+Route::get('/test/assistant', function () {
+    $message = request('msg', ' طلبي رقم ORD-1001 وإيميلي ahmed@test.com، هيوصل امتى؟واعرضلى الطلب ');
+
+    return (string) (new SupportAssistant)->prompt($message);
+});
 Route::get('/test/summary', function () {
     $messages = [
         'غاضب'  => 'أنا بقالي 3 أيام بحاول أدفع الاشتراك والفيزا بترفض كل مرة!! وبعتلكم إيميلين ومحدش رد، لو المشكلة ما اتحلتش النهارده هلغي الاشتراك.',
